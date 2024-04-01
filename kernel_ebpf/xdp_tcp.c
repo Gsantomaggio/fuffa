@@ -4,8 +4,7 @@
 #include <bpf/bpf_tracing.h>
 
 
-SEC("xdp")
-int xdp_tcp_filter(struct xdp_md *ctx)
+SEC("xdp") int xdp_tcp_filter(struct xdp_md *ctx)
 {
     bpf_printk("xdp\n");
     return XDP_PASS;

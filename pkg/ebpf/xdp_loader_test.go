@@ -8,21 +8,21 @@ import (
 
 const XdpTcpObj = "../../objs/xdp_tcp.o"
 
-// XDPLoader is a struct that contains the eBPF object file path, the eBPF collection and a logger
+// XDPLoader is a struct that contains the eBPF object file path, the eBPF collection and a loggerTestSuite
 
 var _ = Describe("XDPLoader", func() {
 
 	Context("NewXDPLoader", func() {
-
 		It("should load the xdp_tcp object  ", func() {
 			fileInfo, err := os.Stat(XdpTcpObj)
 			Expect(err).To(BeNil())
 			Expect(fileInfo.Size()).To(BeNumerically(">", 0))
-			loader := NewXDPLoader(XdpTcpObj, GinkgoLogr)
+			loader, err := NewXDPLoader(XdpTcpObj, loggerTestSuite)
+			Expect(err).To(BeNil())
 			Expect(loader).NotTo(BeNil())
-			Expect(loader.logger).To(Equal(GinkgoLogr))
 			Expect(loader.fileObj).To(Equal(XdpTcpObj))
-			Expect(loader.Load()).To(BeNil())
+			Expect(loader.GetCollection()).NotTo(BeNil())
+			Expect(loader.GetCollection().Programs["xdp_tcp_filter"]).NotTo(BeNil())
 		})
 	})
 })
