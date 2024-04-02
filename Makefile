@@ -21,7 +21,7 @@ build_go: build_ebpf
 clean:
 	rm -f $(OBJ)
 
-docker:
+test-in-docker:
 	docker build -t xdp-go .
 
 
