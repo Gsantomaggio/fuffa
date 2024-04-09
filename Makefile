@@ -1,8 +1,8 @@
 CC := clang
 CFLAGS := -O2 -g -target bpf -I/usr/include -I/usr/src/linux-headers-$(shell uname -r)/include -D__BPF_TRACING__
 SRC := ./kernel_ebpf/xdp_tcp.c
-OBJ := ./objs/xdp_tcp.o
-VMLINUX_H := ./objs/vmlinux.h
+OBJ := ./kernel_ebpf/xdp_tcp.o
+VMLINUX_H := ./kernel_ebpf/vmlinux.h
 
 
 all: build_ebpf build_go
@@ -16,7 +16,7 @@ $(OBJ): $(SRC) $(VMLINUX_H)
 	$(CC) $(CFLAGS) -c $< -o $@ || (echo "Error building eBPF program"; exit 1)  # Stop on error
 
 build_go: build_ebpf
-	go run ./main.go || (echo "Error running Go program"; exit 1)  # Stop on error
+	go run ./main.go
 
 clean:
 	rm -f $(OBJ)

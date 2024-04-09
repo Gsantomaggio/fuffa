@@ -1,6 +1,7 @@
-package ebpf
+package xdp_ebpf
 
 import (
+	"github.com/cilium/ebpf"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"os"
@@ -17,7 +18,13 @@ var _ = Describe("XDPLoader", func() {
 			fileInfo, err := os.Stat(XdpTcpObj)
 			Expect(err).To(BeNil())
 			Expect(fileInfo.Size()).To(BeNumerically(">", 0))
-			loader, err := NewXDPLoader(XdpTcpObj, loggerTestSuite)
+			loader, err := NewXDPLoader(XdpTcpObj, &ebpf.MapSpec{
+				Name:       "port_filter",
+				Type:       ebpf.PerfEventArray,
+				KeySize:    4,
+				ValueSize:  4,
+				MaxEntries: 1,
+			}, loggerTestSuite)
 			Expect(err).To(BeNil())
 			Expect(loader).NotTo(BeNil())
 			Expect(loader.fileObj).To(Equal(XdpTcpObj))

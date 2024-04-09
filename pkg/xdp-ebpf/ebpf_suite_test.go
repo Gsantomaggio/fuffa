@@ -1,4 +1,4 @@
-package ebpf
+package xdp_ebpf
 
 import (
 	. "github.com/onsi/ginkgo/v2"
@@ -12,7 +12,7 @@ var loggerTestSuite *slog.Logger
 func TestStream(t *testing.T) {
 	defer GinkgoRecover()
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "fuffa ebpf")
+	RunSpecs(t, "fuffa xdp-ebpf")
 }
 
 var _ = BeforeSuite(func() {

@@ -1,8 +1,0 @@
-mode: atomic
-rei/pkg/ebpf/xdp_loader.go:15.76,20.35 2 1
-rei/pkg/ebpf/xdp_loader.go:20.35,22.3 1 0
-rei/pkg/ebpf/xdp_loader.go:24.2,24.17 1 1
-rei/pkg/ebpf/xdp_loader.go:29.54,31.2 1 2
-rei/pkg/ebpf/xdp_loader.go:49.34,51.16 2 1
-rei/pkg/ebpf/xdp_loader.go:51.16,54.3 2 0
-rei/pkg/ebpf/xdp_loader.go:55.2,57.12 3 1

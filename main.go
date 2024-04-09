@@ -1,15 +1,16 @@
 package main
 
 import (
+	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
 	"log/slog"
 	"net"
 	"os"
 	"os/signal"
-	"rei/pkg/ebpf"
+	"rei/pkg/xdp-ebpf"
 )
 
-const XdpTcpObj = "./objs/xdp_tcp.o"
+const XdpTcpObj = "./kernel_ebpf/xdp_tcp.o"
 
 func main() {
 	slogOpts := &slog.HandlerOptions{
@@ -20,7 +21,13 @@ func main() {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, os.Kill)
 
-	loader, err := ebpf.NewXDPLoader(XdpTcpObj, log)
+	loader, err := xdp_ebpf.NewXDPLoader(XdpTcpObj, &ebpf.MapSpec{
+		Name:       "port_filter",
+		Type:       ebpf.Array,
+		KeySize:    4,
+		ValueSize:  4,
+		MaxEntries: 1,
+	}, log)
 	if err != nil {
 		log.Error("failed to load XDP program: %v", err)
 	}
