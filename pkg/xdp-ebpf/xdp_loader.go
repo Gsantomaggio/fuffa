@@ -9,14 +9,12 @@ type XDPLoader struct {
 	fileObj    string           // fileObj is the path to the eBPF object file
 	collection *ebpf.Collection // collection is the eBPF collection\
 	logger     *slog.Logger
-	ebpfMap    *ebpf.MapSpec
 }
 
 // NewXDPLoader creates a new XDPLoader
-func NewXDPLoader(fileObj string, ebpfMap *ebpf.MapSpec, logger *slog.Logger) (*XDPLoader, error) {
+func NewXDPLoader(fileObj string, logger *slog.Logger) (*XDPLoader, error) {
 	xdp := &XDPLoader{
 		fileObj: fileObj,
-		ebpfMap: ebpfMap,
 		logger:  logger,
 	}
 
@@ -50,27 +48,35 @@ func (x *XDPLoader) GetCollection() *ebpf.Collection {
 //}
 
 func (x *XDPLoader) load() error {
-	coll, err := ebpf.LoadCollection(x.fileObj)
+	spec, err := ebpf.LoadCollectionSpec(x.fileObj)
 	if err != nil {
 		slog.Error("Error loading eBPF object file", "file", x.fileObj, "error", err)
 		return err
 	}
 
-	m2, _ := coll.Maps["port_filter"]
-	m, err := ebpf.NewMap(x.ebpfMap)
-	if err != nil {
-		return err
-	}
-
-	var port uint32
-	port = 5552
-	if err := m.Put(uint32(0), &port); err != nil {
-		return err
-	}
-	if err := m2.Put(uint32(0), &port); err != nil {
-		return err
-	}
-
+	coll, err := ebpf.NewCollection(spec)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//// Close the Collection before the enclosing function returns.
+	////defer coll.Close()
+	//
+	//// Obtain a reference to 'my_map'.
+	//m := coll.Maps["port_filter"]
+	//
+	//var value uint64
+	//if err := m.Lookup(uint32(0), &value); err != nil {
+	//	log.Fatalf("failed to lookup map: %v", err)
+	//}
+	//
+	//if err := m.Put(uint32(0), uint64(5552)); err != nil {
+	//	panic(err)
+	//}
+	//
+	//log.Printf("value: %d\n", value)
+	////if err := m.Update(uint32(0), uint64(5552), ebpf.UpdateAny); err != nil {
+	//	log.Fatalf("failed to update map: %v", err)
+	//}
 	x.collection = coll
 	slog.Info("eBPF object file loaded. ", "file", x.fileObj)
 	return nil
