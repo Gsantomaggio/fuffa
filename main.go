@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"rei/pkg/xdp-ebpf"
+	"syscall"
 )
 
 const XdpTcpObj = "./kernel_ebpf/xdp_tcp.o"
@@ -19,7 +20,7 @@ func main() {
 	log := slog.New(slog.NewTextHandler(os.Stdout, slogOpts))
 
 	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, os.Kill)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 
 	loader, err := xdp_ebpf.NewXDPLoader(XdpTcpObj, &ebpf.MapSpec{
 		Name:       "port_filter",
