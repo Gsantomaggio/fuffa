@@ -20,6 +20,8 @@ jobs:
 
       - name: Get previous release tag
         id: previous
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # List releases (current one is first), get the second as previous tag
           PREV=$(gh release list --limit 2 --json tagName --jq '.[1].tagName // empty')
