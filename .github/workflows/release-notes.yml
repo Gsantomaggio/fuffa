@@ -1,0 +1,47 @@
+# Generate release notes from merged PRs grouped by labels (bug, enhancement, document)
+# and update the release body. PRs with a milestone show it in the notes.
+# Triggered when a release is published.
+
+name: Release notes
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get previous release tag
+        id: previous
+        run: |
+          # List releases (current one is first), get the second as previous tag
+          PREV=$(gh release list --limit 2 --json tagName --jq '.[1].tagName // empty')
+          echo "previous_tag=${PREV}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          chmod +x .github/scripts/generate-release-notes.sh
+          .github/scripts/generate-release-notes.sh \
+            "${{ github.repository_owner }}" \
+            "${{ github.event.repository.name }}" \
+            "${{ github.event.release.tag_name }}" \
+            "${{ steps.previous.outputs.previous_tag }}" \
+            > release_notes.md
+
+      - name: Update release body
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --method PATCH \
+            /repos/${{ github.repository }}/releases/${{ github.event.release.id }} \
+            -F body=@release_notes.md
