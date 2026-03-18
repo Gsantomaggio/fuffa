@@ -10,7 +10,12 @@ set -euo pipefail
 LABEL_SECTIONS=(
   "bug|bug-fix:Bug Fix"
   "enhancement:Enhancement"
-  "document:Document"
+  "documentation:Document"
+  "refactor:Refactor"
+  "test:Test"
+  "ci:CI"
+  "perf:Performance"
+  "security:Security"
 )
 
 section_for_labels() {
