@@ -1,41 +1,26 @@
-# Run on release publish: generate release notes from merged PRs grouped by labels,
-# then update the release body. Label mapping is defined in generate-release-notes.sh:
-#   enhancement -> Enhancements, bug|bug-fix -> Bug Fixes, documentation -> Documentation,
-#   refactor -> Refactor, test -> Test, ci -> CI, perf -> Performance, security -> Security.
-name: Release
+# .github/release.yml
 
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: write
-
-jobs:
-  release-notes:
-    name: Generate release notes
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Resolve previous tag
-        id: prev_tag
-        run: |
-          TAG_NAME="${{ github.event.release.tag_name }}"
-          PREV=$(git tag -l --sort=-version:refname | awk -v t="$TAG_NAME" 'prev==t{print; exit} {prev=$0}')
-          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
-          echo "prev_tag=${PREV:-}" >> "$GITHUB_OUTPUT"
-
-      - name: Generate release notes
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
-          TAG_NAME: ${{ steps.prev_tag.outputs.tag_name }}
-          PREV_TAG: ${{ steps.prev_tag.outputs.prev_tag }}
-        run: |
-          chmod +x .github/scripts/generate-release-notes.sh
-          .github/scripts/generate-release-notes.sh
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: Breaking Changes
+      labels:
+        - Semver-Major
+        - breaking-change
+    - title: Enhancements 
+      labels:
+        - Semver-Minor
+        - enhancement
+    - title: Bug Fixes
+      labels:
+        - Semver-Patch
+        - bug
+        - bug-fix
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Dependency Updates
+      labels:
+        - dependencies
