@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Generate release notes from merged PRs, grouped by label.
-# Label mapping: bug, bug-fix -> Bug Fix; enhancement -> Enhancement; document -> Document.
+# Label mapping: enhancement->Enhancements; bug|bug-fix->Bug Fixes; documentation->Documentation;
+# refactor->Refactor; test->Test; ci->CI; perf->Performance; security->Security.
 # Usage: run in GitHub Actions with GITHUB_TOKEN, REPO_OWNER, REPO_NAME, TAG_NAME set; optional PREV_TAG.
 
 set -euo pipefail
@@ -8,8 +9,8 @@ set -euo pipefail
 # Label -> section heading (first matching label wins per PR)
 # Format: "label1|label2|...:Section Title"
 LABEL_SECTIONS=(
-  "bug|bug-fix:Bug Fixes"
   "enhancement:Enhancements"
+  "bug|bug-fix:Bug Fixes"
   "documentation:Documentation"
   "refactor:Refactor"
   "test:Test"
@@ -80,7 +81,7 @@ for num in $PR_NUMS; do
 done
 
 # Build markdown in desired order (must match section names from LABEL_SECTIONS / section_for_labels)
-ORDERED_SECTIONS=("Bug Fixes" "Enhancement" "Documentation" "Refactor" "Test" "CI" "Performance" "Security" "Other")
+ORDERED_SECTIONS=("Enhancements" "Bug Fixes" "Documentation" "Refactor" "Test" "CI" "Performance" "Security" "Other")
 BODY=""
 for sec in "${ORDERED_SECTIONS[@]}"; do
   if [[ -n "${SECTION_PR[$sec]+x}" ]]; then

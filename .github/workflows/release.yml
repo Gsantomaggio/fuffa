@@ -1,6 +1,8 @@
-# Generate release notes from merged PRs, grouped by labels (e.g. bug -> Bug Fix, enhancement -> Enhancement).
-# Runs when a release is published and updates the release body.
-name: Release notes
+# Run on release publish: generate release notes from merged PRs grouped by labels,
+# then update the release body. Label mapping is defined in generate-release-notes.sh:
+#   enhancement -> Enhancements, bug|bug-fix -> Bug Fixes, documentation -> Documentation,
+#   refactor -> Refactor, test -> Test, ci -> CI, perf -> Performance, security -> Security.
+name: Release
 
 on:
   release:
@@ -10,7 +12,8 @@ permissions:
   contents: write
 
 jobs:
-  generate:
+  release-notes:
+    name: Generate release notes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
