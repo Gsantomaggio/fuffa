@@ -79,8 +79,8 @@ for num in $PR_NUMS; do
   fi
 done
 
-# Build markdown in desired order
-ORDERED_SECTIONS=("Bug Fix" "Enhancement" "Document" "Other")
+# Build markdown in desired order (must match section names from LABEL_SECTIONS / section_for_labels)
+ORDERED_SECTIONS=("Bug Fixes" "Enhancement" "Documentation" "Refactor" "Test" "CI" "Performance" "Security" "Other")
 BODY=""
 for sec in "${ORDERED_SECTIONS[@]}"; do
   if [[ -n "${SECTION_PR[$sec]+x}" ]]; then
