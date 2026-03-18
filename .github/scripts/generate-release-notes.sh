@@ -9,7 +9,7 @@ set -euo pipefail
 # Format: "label1|label2|...:Section Title"
 LABEL_SECTIONS=(
   "bug|bug-fix:Bug Fixes"
-  "enhancement:Enhancement"
+  "enhancement:Enhancements"
   "documentation:Documentation"
   "refactor:Refactor"
   "test:Test"
