@@ -8,8 +8,9 @@ set -euo pipefail
 # Label -> section heading (first matching label wins per PR)
 # Format: "label1|label2|...:Section Title"
 LABEL_SECTIONS=(
-  "bug|bug-fix:Bug Fix"
   "enhancement:Enhancement"
+  "bug|bug-fix:Bug Fixes"
+  "feature:Feature"
   "documentation:Document"
   "refactor:Refactor"
   "test:Test"
@@ -44,9 +45,13 @@ if [[ -z "${PREV_TAG}" ]]; then
   # Compare from default branch (e.g. first release or when PREV_TAG not set)
   DEFAULT_BRANCH=$(gh api "repos/${REPO}" --jq '.default_branch')
   COMPARE_URL="repos/${REPO}/compare/${DEFAULT_BRANCH}...${TAG_NAME}"
+  FROM_REF="${DEFAULT_BRANCH}"
 else
   COMPARE_URL="repos/${REPO}/compare/${PREV_TAG}...${TAG_NAME}"
+  FROM_REF="${PREV_TAG}"
 fi
+
+FULL_CHANGELOG_URL="https://github.com/${REPO}/compare/${FROM_REF}...${TAG_NAME}"
 
 # Collect unique PR numbers from commits in the range
 PR_NUMS=$(gh api "$COMPARE_URL" --jq '.commits[] | .sha' 2>/dev/null | while read -r sha; do
@@ -88,6 +93,7 @@ done
 BODY="${BODY%%$'\n\n'}"
 
 if [[ -n "$BODY" ]]; then
+  BODY="${BODY}"$'\n\n'"**Full Changelog**: ${FULL_CHANGELOG_URL}"
   gh release edit "$TAG_NAME" --repo "$REPO" --notes "$BODY"
   echo "Release notes updated for $TAG_NAME"
 else
