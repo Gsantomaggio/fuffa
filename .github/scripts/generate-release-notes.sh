@@ -8,9 +8,8 @@ set -euo pipefail
 # Label -> section heading (first matching label wins per PR)
 # Format: "label1|label2|...:Section Title"
 LABEL_SECTIONS=(
+  "bug|bug-fix:Bug Fix"
   "enhancement:Enhancement"
-  "bug|bug-fix:Bug Fixes"
-  "feature:Feature"
   "documentation:Documentation"
   "refactor:Refactor"
   "test:Test"
