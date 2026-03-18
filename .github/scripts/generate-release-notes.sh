@@ -11,7 +11,7 @@ LABEL_SECTIONS=(
   "enhancement:Enhancement"
   "bug|bug-fix:Bug Fixes"
   "feature:Feature"
-  "documentation:Document"
+  "documentation:Documentation"
   "refactor:Refactor"
   "test:Test"
   "ci:CI"
