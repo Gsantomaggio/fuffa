@@ -61,12 +61,13 @@ for num in $PR_NUMS; do
   if [[ -z "${pr_json}" ]]; then continue; fi
   title=$(echo "$pr_json" | jq -r '.title')
   html_url=$(echo "$pr_json" | jq -r '.html_url')
+  author=$(echo "$pr_json" | jq -r '.user.login')
   labels=$(echo "$pr_json" | jq -r '[.labels[].name] | join(",")')
   section=$(section_for_labels "$labels")
   if [[ -z "$section" ]]; then
     section="$SECTION_OTHER"
   fi
-  line="- ${title} [#${num}](${html_url})"
+  line="- ${title} [#${num}](${html_url}) by @${author}"
   if [[ -z "${SECTION_PR[$section]+x}" ]]; then
     SECTION_PR[$section]="$line"
   else
